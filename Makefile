@@ -15,16 +15,16 @@
 #   GNU General Public License for more details.
 # */
 LIBS += -ltirpc -lnsl
-build: rpc server client
+build: server client
 
 rpc:
 	rpcgen -C auth.x
 
 server:
-	g++ -g -o server -g server.cpp auth_svc.c auth_xdr.c $(LIBS)
+	g++ -g -o server -g server.cpp session.cpp auth_svc.c auth_xdr.c $(LIBS)
 
 client:
 	g++ -g -o client -g client.cpp auth_clnt.c auth_xdr.c $(LIBS)
 
 clean:
-	rm -f client server auth.h auth_svc.* auth_clnt.*
+	rm -f client server
