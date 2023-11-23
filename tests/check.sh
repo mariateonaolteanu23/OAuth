@@ -6,9 +6,9 @@
 # ./check.sh all -> ruleaza toate testele
 #
 # Completati/schimbati urmatoarele valori inainte de utilizare:
-SERVER_NAME=""
+SERVER_NAME="./../server"
 SERVER_PARAMS="tests/test$1/userIDs.db tests/test$1/resources.db tests/test$1/approvals.db"
-CLIENT_NAME=""
+CLIENT_NAME="./../client"
 CLIENT_PARAMS="tests/test$1/client.in"
 SERVER_ADDR="localhost"
 
