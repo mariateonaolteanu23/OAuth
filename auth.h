@@ -14,37 +14,133 @@ extern "C" {
 #endif
 
 
-typedef char *auth_token;
+typedef char *token;
+
+typedef char *id;
+
+struct auth_token_grant {
+	int status;
+	union {
+		token auth_token;
+	} auth_token_grant_u;
+};
+typedef struct auth_token_grant auth_token_grant;
+
+struct auth_grant {
+	int status;
+	union {
+		token auth_token;
+	} auth_grant_u;
+};
+typedef struct auth_grant auth_grant;
+
+struct request_access_token_body {
+	id user_id;
+	token auth_token;
+	bool_t refresh;
+};
+typedef struct request_access_token_body request_access_token_body;
+
+struct bearer_tokens {
+	token access_token;
+	token refresh_token;
+};
+typedef struct bearer_tokens bearer_tokens;
+
+struct access_grant {
+	int status;
+	union {
+		token access_token;
+		bearer_tokens tokens;
+	} access_grant_u;
+};
+typedef struct access_grant access_grant;
+
+struct refresh_grant {
+	int status;
+	union {
+		bearer_tokens tokens;
+	} refresh_grant_u;
+};
+typedef struct refresh_grant refresh_grant;
+
+struct request_resource_access_body {
+	token access_token;
+	char *resource;
+	char *operation;
+};
+typedef struct request_resource_access_body request_resource_access_body;
+
+struct resource_grant {
+	int status;
+};
+typedef struct resource_grant resource_grant;
 
 #define AUTH_PROG 223232323
 #define AUTH_VERS 1
 
 #if defined(__STDC__) || defined(__cplusplus)
-#define REQUEST_AUTHORIZATION 1
-extern  auth_token * request_authorization_1(char **, CLIENT *);
-extern  auth_token * request_authorization_1_svc(char **, struct svc_req *);
-#define REQUEST_ACCESS_TOKEN 2
-extern  char ** request_access_token_1(char **, CLIENT *);
-extern  char ** request_access_token_1_svc(char **, struct svc_req *);
+#define REQUEST_AUTHORIZATION_TOKEN 1
+extern  auth_token_grant * request_authorization_token_1(id *, CLIENT *);
+extern  auth_token_grant * request_authorization_token_1_svc(id *, struct svc_req *);
+#define APPROVE_TOKEN 2
+extern  auth_grant * approve_token_1(token *, CLIENT *);
+extern  auth_grant * approve_token_1_svc(token *, struct svc_req *);
+#define REQUEST_ACCESS_TOKEN 3
+extern  access_grant * request_access_token_1(request_access_token_body *, CLIENT *);
+extern  access_grant * request_access_token_1_svc(request_access_token_body *, struct svc_req *);
+#define REQUEST_REFRESH_TOKEN 4
+extern  refresh_grant * request_refresh_token_1(token *, CLIENT *);
+extern  refresh_grant * request_refresh_token_1_svc(token *, struct svc_req *);
+#define REQUEST_RESOURCE 5
+extern  resource_grant * request_resource_1(request_resource_access_body *, CLIENT *);
+extern  resource_grant * request_resource_1_svc(request_resource_access_body *, struct svc_req *);
 extern int auth_prog_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
-#define REQUEST_AUTHORIZATION 1
-extern  auth_token * request_authorization_1();
-extern  auth_token * request_authorization_1_svc();
-#define REQUEST_ACCESS_TOKEN 2
-extern  char ** request_access_token_1();
-extern  char ** request_access_token_1_svc();
+#define REQUEST_AUTHORIZATION_TOKEN 1
+extern  auth_token_grant * request_authorization_token_1();
+extern  auth_token_grant * request_authorization_token_1_svc();
+#define APPROVE_TOKEN 2
+extern  auth_grant * approve_token_1();
+extern  auth_grant * approve_token_1_svc();
+#define REQUEST_ACCESS_TOKEN 3
+extern  access_grant * request_access_token_1();
+extern  access_grant * request_access_token_1_svc();
+#define REQUEST_REFRESH_TOKEN 4
+extern  refresh_grant * request_refresh_token_1();
+extern  refresh_grant * request_refresh_token_1_svc();
+#define REQUEST_RESOURCE 5
+extern  resource_grant * request_resource_1();
+extern  resource_grant * request_resource_1_svc();
 extern int auth_prog_1_freeresult ();
 #endif /* K&R C */
 
 /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  bool_t xdr_auth_token (XDR *, auth_token*);
+extern  bool_t xdr_token (XDR *, token*);
+extern  bool_t xdr_id (XDR *, id*);
+extern  bool_t xdr_auth_token_grant (XDR *, auth_token_grant*);
+extern  bool_t xdr_auth_grant (XDR *, auth_grant*);
+extern  bool_t xdr_request_access_token_body (XDR *, request_access_token_body*);
+extern  bool_t xdr_bearer_tokens (XDR *, bearer_tokens*);
+extern  bool_t xdr_access_grant (XDR *, access_grant*);
+extern  bool_t xdr_refresh_grant (XDR *, refresh_grant*);
+extern  bool_t xdr_request_resource_access_body (XDR *, request_resource_access_body*);
+extern  bool_t xdr_resource_grant (XDR *, resource_grant*);
 
 #else /* K&R C */
-extern bool_t xdr_auth_token ();
+extern bool_t xdr_token ();
+extern bool_t xdr_id ();
+extern bool_t xdr_auth_token_grant ();
+extern bool_t xdr_auth_grant ();
+extern bool_t xdr_request_access_token_body ();
+extern bool_t xdr_bearer_tokens ();
+extern bool_t xdr_access_grant ();
+extern bool_t xdr_refresh_grant ();
+extern bool_t xdr_request_resource_access_body ();
+extern bool_t xdr_resource_grant ();
 
 #endif /* K&R C */
 

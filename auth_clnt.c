@@ -9,30 +9,75 @@
 /* Default timeout can be changed using clnt_control() */
 static struct timeval TIMEOUT = { 25, 0 };
 
-auth_token *
-request_authorization_1(char **argp, CLIENT *clnt)
+auth_token_grant *
+request_authorization_token_1(id *argp, CLIENT *clnt)
 {
-	static auth_token clnt_res;
+	static auth_token_grant clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call (clnt, REQUEST_AUTHORIZATION,
-		(xdrproc_t) xdr_wrapstring, (caddr_t) argp,
-		(xdrproc_t) xdr_auth_token, (caddr_t) &clnt_res,
+	if (clnt_call (clnt, REQUEST_AUTHORIZATION_TOKEN,
+		(xdrproc_t) xdr_id, (caddr_t) argp,
+		(xdrproc_t) xdr_auth_token_grant, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);
 }
 
-char **
-request_access_token_1(char **argp, CLIENT *clnt)
+auth_grant *
+approve_token_1(token *argp, CLIENT *clnt)
 {
-	static char *clnt_res;
+	static auth_grant clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, APPROVE_TOKEN,
+		(xdrproc_t) xdr_token, (caddr_t) argp,
+		(xdrproc_t) xdr_auth_grant, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+access_grant *
+request_access_token_1(request_access_token_body *argp, CLIENT *clnt)
+{
+	static access_grant clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call (clnt, REQUEST_ACCESS_TOKEN,
-		(xdrproc_t) xdr_wrapstring, (caddr_t) argp,
-		(xdrproc_t) xdr_wrapstring, (caddr_t) &clnt_res,
+		(xdrproc_t) xdr_request_access_token_body, (caddr_t) argp,
+		(xdrproc_t) xdr_access_grant, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+refresh_grant *
+request_refresh_token_1(token *argp, CLIENT *clnt)
+{
+	static refresh_grant clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, REQUEST_REFRESH_TOKEN,
+		(xdrproc_t) xdr_token, (caddr_t) argp,
+		(xdrproc_t) xdr_refresh_grant, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+resource_grant *
+request_resource_1(request_resource_access_body *argp, CLIENT *clnt)
+{
+	static resource_grant clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, REQUEST_RESOURCE,
+		(xdrproc_t) xdr_request_resource_access_body, (caddr_t) argp,
+		(xdrproc_t) xdr_resource_grant, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
