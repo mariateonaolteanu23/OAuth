@@ -8,8 +8,7 @@
 
 using namespace std;
 
-int token_life_time;
-
+int token_lifetime;
 map<string, auth_serv_session> auth_serv_storage;
 map<string, res_serv_session> res_server_storage;
 
@@ -18,7 +17,7 @@ auth_token_grant *request_authorization_token_1_svc(id *id, struct svc_req *req)
     static auth_token_grant auth_token_grant;
     cout << "BEGIN " << *id << " AUTHZ\n";
 
-    if (id_is_valid(*id)) {
+    if (!user_not_found(*id)) {
         // free previous grant
         xdr_free((xdrproc_t)xdr_auth_token_grant, (void *)&auth_token_grant);
         
@@ -44,6 +43,7 @@ auth_grant *approve_token_1_svc(token *auth_token, struct svc_req * req) {
     xdr_free((xdrproc_t)xdr_auth_grant, (void *)&auth_grant);
     auth_grant.auth_grant_u.auth_token = strdup(*auth_token);
 
+    // request approval from third-party
     if (token_is_approved()) {
         // mark auth token as signed
         sign_auth_token(*auth_token);
@@ -76,21 +76,24 @@ access_grant *request_access_token_1_svc(request_access_token_params *data, stru
         auth_serv_storage[data->id].set_access_token(access_token);
         
         // auth server -> res server : resource owner interacts with the authorization server to grant access
-        res_server_storage[access_token] = res_serv_session(token_life_time, permissions, data->refresh);
+        res_server_storage[access_token] = res_serv_session(token_lifetime, permissions, data->refresh);
 
         // generate refresh token
         if (data->refresh) {
             char *refresh_token = generate_access_token(access_token);
             cout << "  RefreshToken = " << refresh_token << "\n";
-
+            
+            // update user's session data - store refresh token
             auth_serv_storage[data->id].set_refresh_token(refresh_token);
 
+            //  grant access & refresh tokens
             access_grant.access_grant_u.tokens.access_token = strdup(access_token);
             access_grant.access_grant_u.tokens.refresh_token = strdup(refresh_token);
             access_grant.status = REQUEST_APPROVED_ACCESS_REFRESH;
             return &access_grant;
         }
 
+        //  grant access token
         access_grant.access_grant_u.access_token = strdup(access_token);
         access_grant.status = REQUEST_APPROVED_ACCESS;
         return &access_grant;
@@ -124,15 +127,14 @@ refresh_grant *request_refresh_token_1_svc(request_refresh_params *data, struct 
         it->second.set_access_token(new_access_token);
         it->second.set_refresh_token(new_refresh_token);
 
-        // notify resource server of the update
+        // notify resource server of the change
         update_access_token(old_access_token, new_access_token);
 
-        //  create response for client
         xdr_free((xdrproc_t)xdr_refresh_grant, (void *)&refresh_grant);
 
+        //  grant new/refreshed tokens
         refresh_grant.refresh_grant_u.tokens.access_token = strdup(new_access_token);
         refresh_grant.refresh_grant_u.tokens.refresh_token = strdup(new_refresh_token);
-
         refresh_grant.status = REFRESH_GRANTED;
         return &refresh_grant;
     }
@@ -140,11 +142,6 @@ refresh_grant *request_refresh_token_1_svc(request_refresh_params *data, struct 
     //  refresh token is invalid (doesn't exist) => auth server can't grant refresh
     refresh_grant.status = REFRESH_DENIED;
     return &refresh_grant;
-}
-
-
-void print_server_request_resource(bool success, char *token, char *resource, char *operation, int life) {
-    cout << (success ? "PERMIT" : "DENY") << " (" << operation << "," << resource << "," << (token != NULL ? token : "") << "," << life << ")\n";
 }
 
 resource_grant *request_resource_access_1_svc(request_resource_access_params *data, struct svc_req *req) {
@@ -163,38 +160,37 @@ resource_grant *request_resource_access_1_svc(request_resource_access_params *da
     }
 
     // token expired
-    if (it->second.life_time == 0) {
+    if (it->second.lifetime == 0) {
         //  user doesn't have a refresh grant
         if (!it->second.refresh_granted) {
-            // remove access token
+            // remove access token from server storage
             res_server_storage.erase(data->access_token);
 
-            // print error
             print_server_request_resource(false, NULL, data->resource, data->operation, 0);
         }
         resource_grant.status = TOKEN_EXPIRED;
         return &resource_grant;
     }
 
-    // update token life time
-    it->second.life_time--;
+    // update token's lifetime
+    it->second.lifetime--;
 
     // requested resource not found
-    if (resources.find(data->resource) == resources.end()) {
-        print_server_request_resource(false, data->access_token, data->resource, data->operation, it->second.life_time);
+    if (resource_not_found(data->resource)) {
+        print_server_request_resource(false, data->access_token, data->resource, data->operation, it->second.lifetime);
         resource_grant.status = RESOURCE_NOT_FOUND;
         return &resource_grant;
     }
 
     // user isn't allowed to perform given operation on given resource
     if (!operation_is_permitted(data->resource, data->operation, it->second)) {
-        print_server_request_resource(false, data->access_token, data->resource, data->operation, it->second.life_time);
+        print_server_request_resource(false, data->access_token, data->resource, data->operation, it->second.lifetime);
         resource_grant.status = OPERATION_NOT_PERMITTED;
         return &resource_grant;
     }
     
     // validate action
-    print_server_request_resource(true, data->access_token, data->resource, data->operation, it->second.life_time);
+    print_server_request_resource(true, data->access_token, data->resource, data->operation, it->second.lifetime);
     resource_grant.status = PERMISSION_GRANTED;
     return &resource_grant;
 }

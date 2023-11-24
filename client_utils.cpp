@@ -97,6 +97,7 @@ void print_request_resource_access(int status, bool refresh) {
 
 }
 
+//  requests access to a resource and prints the server's response
 int request_resource_access(CLIENT* handle, const char *access_token, const char *resource, const char *operation, bool refresh) {
 
 	//  request resource access

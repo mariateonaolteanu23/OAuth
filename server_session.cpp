@@ -4,7 +4,7 @@
 res_serv_session::res_serv_session() {}
 
 res_serv_session::res_serv_session(int life, map<string, string> perm, bool refresh) {
-    life_time = life;
+    lifetime = life;
     permissions = perm;
     refresh_granted = refresh;
 }
