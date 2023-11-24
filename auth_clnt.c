@@ -40,13 +40,13 @@ approve_token_1(token *argp, CLIENT *clnt)
 }
 
 access_grant *
-request_access_token_1(request_access_token_body *argp, CLIENT *clnt)
+request_access_token_1(request_access_token_params *argp, CLIENT *clnt)
 {
 	static access_grant clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call (clnt, REQUEST_ACCESS_TOKEN,
-		(xdrproc_t) xdr_request_access_token_body, (caddr_t) argp,
+		(xdrproc_t) xdr_request_access_token_params, (caddr_t) argp,
 		(xdrproc_t) xdr_access_grant, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
@@ -55,13 +55,13 @@ request_access_token_1(request_access_token_body *argp, CLIENT *clnt)
 }
 
 refresh_grant *
-request_refresh_token_1(token *argp, CLIENT *clnt)
+request_refresh_token_1(request_refresh_params *argp, CLIENT *clnt)
 {
 	static refresh_grant clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call (clnt, REQUEST_REFRESH_TOKEN,
-		(xdrproc_t) xdr_token, (caddr_t) argp,
+		(xdrproc_t) xdr_request_refresh_params, (caddr_t) argp,
 		(xdrproc_t) xdr_refresh_grant, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
@@ -70,13 +70,13 @@ request_refresh_token_1(token *argp, CLIENT *clnt)
 }
 
 resource_grant *
-request_resource_1(request_resource_access_body *argp, CLIENT *clnt)
+request_resource_access_1(request_resource_access_params *argp, CLIENT *clnt)
 {
 	static resource_grant clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call (clnt, REQUEST_RESOURCE,
-		(xdrproc_t) xdr_request_resource_access_body, (caddr_t) argp,
+	if (clnt_call (clnt, REQUEST_RESOURCE_ACCESS,
+		(xdrproc_t) xdr_request_resource_access_params, (caddr_t) argp,
 		(xdrproc_t) xdr_resource_grant, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);

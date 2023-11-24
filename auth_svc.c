@@ -15,5 +15,3 @@
 #ifndef SIG_PF
 #define SIG_PF void(*)(int)
 #endif
-
-

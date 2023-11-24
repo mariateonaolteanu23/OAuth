@@ -8,7 +8,7 @@
 bool_t
 xdr_token (XDR *xdrs, token *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_string (xdrs, objp, ~0))
 		 return FALSE;
@@ -18,7 +18,7 @@ xdr_token (XDR *xdrs, token *objp)
 bool_t
 xdr_id (XDR *xdrs, id *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_string (xdrs, objp, ~0))
 		 return FALSE;
@@ -28,7 +28,7 @@ xdr_id (XDR *xdrs, id *objp)
 bool_t
 xdr_auth_token_grant (XDR *xdrs, auth_token_grant *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_int (xdrs, &objp->status))
 		 return FALSE;
@@ -46,7 +46,7 @@ xdr_auth_token_grant (XDR *xdrs, auth_token_grant *objp)
 bool_t
 xdr_auth_grant (XDR *xdrs, auth_grant *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_int (xdrs, &objp->status))
 		 return FALSE;
@@ -62,11 +62,11 @@ xdr_auth_grant (XDR *xdrs, auth_grant *objp)
 }
 
 bool_t
-xdr_request_access_token_body (XDR *xdrs, request_access_token_body *objp)
+xdr_request_access_token_params (XDR *xdrs, request_access_token_params *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
-	 if (!xdr_id (xdrs, &objp->user_id))
+	 if (!xdr_id (xdrs, &objp->id))
 		 return FALSE;
 	 if (!xdr_token (xdrs, &objp->auth_token))
 		 return FALSE;
@@ -78,7 +78,7 @@ xdr_request_access_token_body (XDR *xdrs, request_access_token_body *objp)
 bool_t
 xdr_bearer_tokens (XDR *xdrs, bearer_tokens *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_token (xdrs, &objp->access_token))
 		 return FALSE;
@@ -90,7 +90,7 @@ xdr_bearer_tokens (XDR *xdrs, bearer_tokens *objp)
 bool_t
 xdr_access_grant (XDR *xdrs, access_grant *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_int (xdrs, &objp->status))
 		 return FALSE;
@@ -110,9 +110,21 @@ xdr_access_grant (XDR *xdrs, access_grant *objp)
 }
 
 bool_t
+xdr_request_refresh_params (XDR *xdrs, request_refresh_params *objp)
+{
+	int32_t *buf;
+
+	 if (!xdr_id (xdrs, &objp->id))
+		 return FALSE;
+	 if (!xdr_token (xdrs, &objp->refresh_token))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
 xdr_refresh_grant (XDR *xdrs, refresh_grant *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_int (xdrs, &objp->status))
 		 return FALSE;
@@ -128,9 +140,9 @@ xdr_refresh_grant (XDR *xdrs, refresh_grant *objp)
 }
 
 bool_t
-xdr_request_resource_access_body (XDR *xdrs, request_resource_access_body *objp)
+xdr_request_resource_access_params (XDR *xdrs, request_resource_access_params *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_token (xdrs, &objp->access_token))
 		 return FALSE;
@@ -144,7 +156,7 @@ xdr_request_resource_access_body (XDR *xdrs, request_resource_access_body *objp)
 bool_t
 xdr_resource_grant (XDR *xdrs, resource_grant *objp)
 {
-	register int32_t *buf;
+	int32_t *buf;
 
 	 if (!xdr_int (xdrs, &objp->status))
 		 return FALSE;

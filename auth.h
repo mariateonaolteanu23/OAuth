@@ -34,12 +34,12 @@ struct auth_grant {
 };
 typedef struct auth_grant auth_grant;
 
-struct request_access_token_body {
-	id user_id;
+struct request_access_token_params {
+	id id;
 	token auth_token;
 	bool_t refresh;
 };
-typedef struct request_access_token_body request_access_token_body;
+typedef struct request_access_token_params request_access_token_params;
 
 struct bearer_tokens {
 	token access_token;
@@ -56,6 +56,12 @@ struct access_grant {
 };
 typedef struct access_grant access_grant;
 
+struct request_refresh_params {
+	id id;
+	token refresh_token;
+};
+typedef struct request_refresh_params request_refresh_params;
+
 struct refresh_grant {
 	int status;
 	union {
@@ -64,12 +70,12 @@ struct refresh_grant {
 };
 typedef struct refresh_grant refresh_grant;
 
-struct request_resource_access_body {
+struct request_resource_access_params {
 	token access_token;
 	char *resource;
 	char *operation;
 };
-typedef struct request_resource_access_body request_resource_access_body;
+typedef struct request_resource_access_params request_resource_access_params;
 
 struct resource_grant {
 	int status;
@@ -87,14 +93,14 @@ extern  auth_token_grant * request_authorization_token_1_svc(id *, struct svc_re
 extern  auth_grant * approve_token_1(token *, CLIENT *);
 extern  auth_grant * approve_token_1_svc(token *, struct svc_req *);
 #define REQUEST_ACCESS_TOKEN 3
-extern  access_grant * request_access_token_1(request_access_token_body *, CLIENT *);
-extern  access_grant * request_access_token_1_svc(request_access_token_body *, struct svc_req *);
+extern  access_grant * request_access_token_1(request_access_token_params *, CLIENT *);
+extern  access_grant * request_access_token_1_svc(request_access_token_params *, struct svc_req *);
 #define REQUEST_REFRESH_TOKEN 4
-extern  refresh_grant * request_refresh_token_1(token *, CLIENT *);
-extern  refresh_grant * request_refresh_token_1_svc(token *, struct svc_req *);
-#define REQUEST_RESOURCE 5
-extern  resource_grant * request_resource_1(request_resource_access_body *, CLIENT *);
-extern  resource_grant * request_resource_1_svc(request_resource_access_body *, struct svc_req *);
+extern  refresh_grant * request_refresh_token_1(request_refresh_params *, CLIENT *);
+extern  refresh_grant * request_refresh_token_1_svc(request_refresh_params *, struct svc_req *);
+#define REQUEST_RESOURCE_ACCESS 5
+extern  resource_grant * request_resource_access_1(request_resource_access_params *, CLIENT *);
+extern  resource_grant * request_resource_access_1_svc(request_resource_access_params *, struct svc_req *);
 extern int auth_prog_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
@@ -110,9 +116,9 @@ extern  access_grant * request_access_token_1_svc();
 #define REQUEST_REFRESH_TOKEN 4
 extern  refresh_grant * request_refresh_token_1();
 extern  refresh_grant * request_refresh_token_1_svc();
-#define REQUEST_RESOURCE 5
-extern  resource_grant * request_resource_1();
-extern  resource_grant * request_resource_1_svc();
+#define REQUEST_RESOURCE_ACCESS 5
+extern  resource_grant * request_resource_access_1();
+extern  resource_grant * request_resource_access_1_svc();
 extern int auth_prog_1_freeresult ();
 #endif /* K&R C */
 
@@ -123,11 +129,12 @@ extern  bool_t xdr_token (XDR *, token*);
 extern  bool_t xdr_id (XDR *, id*);
 extern  bool_t xdr_auth_token_grant (XDR *, auth_token_grant*);
 extern  bool_t xdr_auth_grant (XDR *, auth_grant*);
-extern  bool_t xdr_request_access_token_body (XDR *, request_access_token_body*);
+extern  bool_t xdr_request_access_token_params (XDR *, request_access_token_params*);
 extern  bool_t xdr_bearer_tokens (XDR *, bearer_tokens*);
 extern  bool_t xdr_access_grant (XDR *, access_grant*);
+extern  bool_t xdr_request_refresh_params (XDR *, request_refresh_params*);
 extern  bool_t xdr_refresh_grant (XDR *, refresh_grant*);
-extern  bool_t xdr_request_resource_access_body (XDR *, request_resource_access_body*);
+extern  bool_t xdr_request_resource_access_params (XDR *, request_resource_access_params*);
 extern  bool_t xdr_resource_grant (XDR *, resource_grant*);
 
 #else /* K&R C */
@@ -135,11 +142,12 @@ extern bool_t xdr_token ();
 extern bool_t xdr_id ();
 extern bool_t xdr_auth_token_grant ();
 extern bool_t xdr_auth_grant ();
-extern bool_t xdr_request_access_token_body ();
+extern bool_t xdr_request_access_token_params ();
 extern bool_t xdr_bearer_tokens ();
 extern bool_t xdr_access_grant ();
+extern bool_t xdr_request_refresh_params ();
 extern bool_t xdr_refresh_grant ();
-extern bool_t xdr_request_resource_access_body ();
+extern bool_t xdr_request_resource_access_params ();
 extern bool_t xdr_resource_grant ();
 
 #endif /* K&R C */
