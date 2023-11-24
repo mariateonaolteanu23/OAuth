@@ -1,5 +1,6 @@
 #include "server_session.h"
 
+//  RESOURCE SERVER
 res_serv_session::res_serv_session() {}
 
 res_serv_session::res_serv_session(int life, map<string, string> perm, bool refresh) {
@@ -8,7 +9,7 @@ res_serv_session::res_serv_session(int life, map<string, string> perm, bool refr
     refresh_granted = refresh;
 }
 
-
+//  AUTHORIZATION SERVER
 auth_serv_session::auth_serv_session() {}
 
 auth_serv_session::auth_serv_session(string auth) {
