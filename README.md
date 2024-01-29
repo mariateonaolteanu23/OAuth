@@ -34,7 +34,7 @@ This process is handled by the `authorization server`. The server has the follow
 5. grant tokens
     
 ## Third-Party Approval
-This proccess is simulated, using an approvals file. Based on the first available approval a set of permissions is assigned. If the permissions are invalid/empty then the authorization token of the user will not be marked as signed.
+This process is simulated, using an approvals file. Based on the first available approval a set of permissions is assigned. If the permissions are invalid/empty then the authorization token of the user will not be marked as signed.
 
 #### Workflow:
 1. receive authorization token 
